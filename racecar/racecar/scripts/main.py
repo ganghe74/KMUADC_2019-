@@ -81,15 +81,16 @@ def auto_drive(pid, curve_count, stop_count=0, obstacle_count = 0):
         elif car_run_speed > 2.05 :
             car_run_speed -= 0.016
     elif curve_count == 2 and obstacle_count == 0:
-        if car_run_speed > 1.1:
+        if car_run_speed > 0.8:
             car_run_speed -= 0.005 * 10
-#    elif curve_count >= 4 and stop_count == 2:
+    elif obstacle_count <= OBSTACLE_NUM and obstacle_count >= 1:
+        car_run_speed = 0.7
 #         if car_run_speed > 0.9:
 #             car_run_speed -= 0.005*10
-    elif obstacle_count > OBSTACLE_NUM:
+    elif obstacle_count > OBSTACLE_NUM:  # S LANE
          car_run_speed = 1.1 #1.1
     else :
-        car_run_speed = 1.1
+        car_run_speed = 0.8
 
     #else:
     #    car_run_speed -= 0.003 * 10
@@ -136,7 +137,7 @@ def main():
     MODE = 0
     obstacle_count = 0
 
-    #curve_detector.curve_count = 2 ##
+    curve_detector.curve_count = 2 ##
 
     while not rospy.is_shutdown():
         img1, x_location = process_image(cv_image)
@@ -145,8 +146,8 @@ def main():
             POS = obstacle_detector.check(obstacles)
             if POS.value == 1: # LEFT
                 obstacle_count += 1
-                for theta in range(270,540,10):
-                    st = 0.20*np.sin(theta*np.pi/180)
+                for theta in range(270,500,10):
+                    st = 0.24*np.sin(theta*np.pi/180)
                     auto_drive(st,2,0,obstacle_count)
                     print(st)
                     time.sleep(0.05)
