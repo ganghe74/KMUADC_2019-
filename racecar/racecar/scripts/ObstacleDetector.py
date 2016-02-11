@@ -18,7 +18,7 @@ class ObstacleDetector:
             p = circle.center
             if -1.0 < p.y < 0:
                 if abs(p.x) < 0.3:
-                    if p.x >= 0:
+                    if p.x >= 0.1:
                         self.mode = Position.RIGHT
                     else:
                         self.mode = Position.LEFT
