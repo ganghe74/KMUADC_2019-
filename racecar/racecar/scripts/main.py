@@ -75,11 +75,11 @@ def auto_drive(pid, curve_count, stop_count=0, obstacle_count = 0):
         if -0.055 < pid and pid > 0.055 and car_run_speed >= 1.3:
             car_run_speed -= 0.005*80
         elif car_run_speed <= target_speed:
-            car_run_speed += 0.005 * 20
+            car_run_speed += 0.005 * 15
             if car_run_speed > target_speed :
                 target_speed = 2.0
         elif car_run_speed > 2.05 :
-            car_run_speed -= 0.016
+            car_run_speed -= 0.025
     elif curve_count == 2 and obstacle_count == 0:
         if car_run_speed > 1.1:
             car_run_speed -= 0.005 * 10
