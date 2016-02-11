@@ -51,7 +51,7 @@ obstacles = None
 ack_publisher = None
 car_run_speed = 0.5
 
-OBSTACLE_NUM = 2
+OBSTACLE_NUM = 1
 
 
 def img_callback(data):
@@ -79,7 +79,7 @@ def auto_drive(pid, curve_count, stop_count=0, obstacle_count = 0):
 #         if car_run_speed > 0.9:
 #             car_run_speed -= 0.005*10
     elif obstacle_count <= OBSTACLE_NUM and obstacle_count >=1:
-         car_run_speed = 0.7 #1.1
+         car_run_speed = 0.7 #0.7
     elif obstacle_count > OBSTACLE_NUM:
          car_run_speed = 1.1 #1.1
     else :
@@ -129,7 +129,7 @@ def main():
     MODE = 0
     obstacle_count = 0
 
-    curve_detector.curve_count = 2 ##
+    #curve_detector.curve_count = 2 ##
 
     while not rospy.is_shutdown():
         img1, x_location = process_image(cv_image)
@@ -158,27 +158,24 @@ def main():
 
                 
             elif POS.value == 2: # RIGHT
-                #pass
-                obstacle_count += 1
+                pass
+                #obstacle_count += 1
                 #for theta in range(270,500,10):
-                for theta in range(270,360,9):
-                    st = 0.06*np.sin(theta*np.pi/180)
-                    auto_drive(-st,2,0,obstacle_count)
-                    #theta += 10
-                    #if theta >= 360:
-                        #break
-                    time.sleep(0.05)
+                #for theta in range(270,360,7):
+                #    st = 0.32*np.sin(theta*np.pi/180)
+                #    auto_drive(-st,2,0,obstacle_count)
+                #    time.sleep(0.05)
                 #while 1:
-                    #auto_drive(0,0,3)
-                for theta in range(360,500,11):
-                    st = 0.12*np.sin(theta*np.pi/180)
-                    auto_drive(-st,2,0,obstacle_count)
-                    #theta += 10
-                    #if theta >= 360:
-                        #break
-                    time.sleep(0.05)
+                #    auto_drive(0,0,3)
+                #for theta in range(360,480,7):
+                #    st = 0.40*np.sin(theta*np.pi/180)
+                #    auto_drive(-st,2,0,obstacle_count)
+                #    time.sleep(0.05)
+                #for i in range(10):
+                #    auto_drive(0.153,2,0,obstacle_count)
+                #    time.sleep(0.05)
                 #while 1:
-                    #auto_drive(0,0,3)
+                #    auto_drive(0,0,3)
           
                 
                 #for i in range(5):
