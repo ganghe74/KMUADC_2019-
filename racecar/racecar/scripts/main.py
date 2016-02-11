@@ -50,6 +50,7 @@ cv_image = None
 obstacles = None
 ack_publisher = None
 car_run_speed = 0.5
+target_speed = 2.5
 
 
 def img_callback(data):
@@ -65,14 +66,22 @@ def obstacle_callback(data):
   
 def auto_drive(pid, curve_count, stop_count=0, obstacle_count = 0):
     global car_run_speed
+    global target_speed
     #w = 0
     if stop_count == 3:
         car_run_speed = 0
     elif curve_count < 2:
         if -0.055 < pid and pid > 0.055 and car_run_speed >= 1.3:
             car_run_speed -= 0.005*80
-        elif car_run_speed <= 2.0:
+        elif car_run_speed <= target_speed:
             car_run_speed += 0.005 * 20
+            if car_run_speed > target_speed :
+                target_speed = 2.0
+        elif car_run_speed > 2.05 :
+            car_run_speed -= 0.016
+    elif curve_count == 2 and obstacle_count == 0:
+        if car_run_speed > 0.8:
+            car_run_speed -= 0.005 * 10
 #    elif curve_count >= 4 and stop_count == 2:
 #         if car_run_speed > 0.9:
 #             car_run_speed -= 0.005*10
@@ -101,6 +110,7 @@ def main():
     global x_location_old
     global car_run_speed
     global obstacles
+    global target_speed
     pid = None
     
     rospy.sleep(3)
@@ -192,7 +202,7 @@ def main():
         #    print(x_location) # for test code
         if x_location != None:
             # test 4 lines
-            if obstacle_count == 4 and np.abs(x_location - x_location_old) > 40:
+            if curve_detector.curve_count == 3 and np.abs(x_location - x_location_old) > 40:
                 x_location = x_location_old
                 print("hello")
             else:
@@ -215,6 +225,7 @@ def main():
             car_run_speed = 1.0
         elif MODE == 1 and -0.03 < pid and pid < 0.03 and obstacle_count < 3:
             MODE = 2
+            car_run_speed = 2.0
 
         detected = stop_counter.check_stop_line(cv_image)
 
@@ -223,7 +234,7 @@ def main():
             obstacle_count = 0
             curve_detector.curve_count = 0
             car_run_speed = 2.0
-
+            target_speed = 3.0
         if stop_counter.cnt == 3: # finish
             while 1:
                 auto_drive(0,0,3)
