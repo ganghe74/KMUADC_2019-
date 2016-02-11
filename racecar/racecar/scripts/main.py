@@ -52,7 +52,7 @@ ack_publisher = None
 car_run_speed = 0.5
 target_speed = 2.5
 
-OBSTACLE_NUM = 2
+OBSTACLE_NUM = 1
 
 def img_callback(data):
     global cv_image
@@ -227,7 +227,7 @@ def main():
             car_run_speed = 1.0
         elif MODE == 1 and -0.03 < pid and pid < 0.03 and obstacle_count < OBSTACLE_NUM:
             MODE = 2
-            car_run_speed = 2.0
+            car_run_speed = 1.7
 
         detected = stop_counter.check_stop_line(cv_image)
 
