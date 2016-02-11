@@ -51,7 +51,7 @@ obstacles = None
 ack_publisher = None
 car_run_speed = 0.5
 
-OBSTACLE_NUM = 1
+OBSTACLE_NUM = 2
 
 
 def img_callback(data):
