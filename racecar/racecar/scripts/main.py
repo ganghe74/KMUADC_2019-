@@ -129,7 +129,7 @@ def main():
     MODE = 0
     obstacle_count = 0
 
-    #curve_detector.curve_count = 2 ##
+    curve_detector.curve_count = 2 ##
 
     while not rospy.is_shutdown():
         img1, x_location = process_image(cv_image)
@@ -158,25 +158,25 @@ def main():
 
                 
             elif POS.value == 2: # RIGHT
-                pass
-                #obstacle_count += 1
+                #pass
+                obstacle_count += 1
                 #for theta in range(270,500,10):
-                #for theta in range(270,360,9):
-                    #st = 0.06*np.sin(theta*np.pi/180)
-                    #auto_drive(-st,2,0,obstacle_count)
+                for theta in range(270,360,9):
+                    st = 0.06*np.sin(theta*np.pi/180)
+                    auto_drive(-st,2,0,obstacle_count)
                     #theta += 10
                     #if theta >= 360:
                         #break
-                    #time.sleep(0.05)
+                    time.sleep(0.05)
                 #while 1:
                     #auto_drive(0,0,3)
-                #for theta in range(360,500,11):
-                    #st = 0.12*np.sin(theta*np.pi/180)
-                    #auto_drive(-st,2,0,obstacle_count)
+                for theta in range(360,500,11):
+                    st = 0.12*np.sin(theta*np.pi/180)
+                    auto_drive(-st,2,0,obstacle_count)
                     #theta += 10
                     #if theta >= 360:
                         #break
-                    #time.sleep(0.05)
+                    time.sleep(0.05)
                 #while 1:
                     #auto_drive(0,0,3)
           
