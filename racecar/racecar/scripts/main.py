@@ -192,11 +192,12 @@ def main():
         #    print(x_location) # for test code
         if x_location != None:
             # test 4 lines
-            #if obstacle_count == 4 and np.abs(x_location - x_location_old) < 40:
-            #    x_location = x_location_old
-            #else:
-            #    x_location_old = x_location
-            x_location_old = x_location
+            if obstacle_count == 4 and np.abs(x_location - x_location_old) > 40:
+                x_location = x_location_old
+                print("hello")
+            else:
+                x_location_old = x_location
+            #x_location_old = x_location
             pid = round(pidcal.pid_control(int(x_location),curve_detector.curve_count), 6)
             #print pid
             auto_drive(pid, curve_detector.curve_count, stop_counter.cnt,obstacle_count)
@@ -228,6 +229,7 @@ def main():
                 auto_drive(0,0,3)
             break
         
+        #obstacle_count = 4 ###
         #print(curve_detector.curve_count)
 
         cv2.putText(cv_image, 'PID %f'%pid, (0,15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)

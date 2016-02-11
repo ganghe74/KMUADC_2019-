@@ -4,7 +4,7 @@ import time
 
 class Stop_Counter:
     def __init__(self):
-        self.cnt = 2
+        self.cnt = 0
         self.previous_time = time.time() + 5
         self.lower_yellow = (20, 100, 100)
         self.upper_yellow = (40, 255, 255)
