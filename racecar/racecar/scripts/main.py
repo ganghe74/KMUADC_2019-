@@ -127,7 +127,7 @@ def main():
     MODE = 0
     obstacle_count = 0
 
-    curve_detector.curve_count = 2 ##
+    #curve_detector.curve_count = 2 ##
 
     while not rospy.is_shutdown():
         img1, x_location = process_image(cv_image)
