@@ -3,8 +3,8 @@ import enum
 
 class Position(enum.Enum):
     NO = 0
-    LEFT = 1
-    RIGHT = 2
+    YES = 1
+    DANGER = 2
 
 class ObstacleDetector:
     def __init__(self):
@@ -16,13 +16,12 @@ class ObstacleDetector:
     def check(self, obstacles):
         for circle in obstacles.circles:
             p = circle.center
-            if -0.75 < p.y < 0:
-                if abs(p.x) < 0.3:
-                    if p.x >= 0:
-                        self.mode = Position.RIGHT
+            if abs(p.x) < 0.3:
+                if -0.75 < p.y < 0:
+                    if p.y > -0.2:
+                        self.mode = Position.DANGER
                     else:
-                        self.mode = Position.LEFT
-                        self.cnt += 1
+                        self.mode = Position.YES
                     break
             else:
                 self.mode = Position.NO
