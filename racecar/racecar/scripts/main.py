@@ -52,7 +52,7 @@ ack_publisher = None
 car_run_speed = 0.5
 target_speed = 2.5
 
-OBSTACLE_NUM = 2
+OBSTACLE_NUM = 1
 
 def img_callback(data):
     global cv_image
