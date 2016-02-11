@@ -17,8 +17,8 @@ class ObstacleDetector:
         for circle in obstacles.circles:
             p = circle.center
             if abs(p.x) < 0.3:
-                if -0.75 < p.y < 0:
-                    if p.y > -0.2:
+                if -1 < p.y < 0:
+                    if p.y > -0.5:
                         self.mode = Position.DANGER
                     else:
                         self.mode = Position.YES

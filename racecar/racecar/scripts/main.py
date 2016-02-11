@@ -70,14 +70,18 @@ def auto_drive(pid):
 #        car_run_speed -= 0.003 * 10
 
     POS = obstacle_detector.check(obstacles)
+
     if POS.value == 2: # DANGER
         if car_run_speed > 0:
-            car_run_speed -= 0.1
-    if POS.value == 1: # YES
-        if car_run_speed > 0.5:
-            car_run_speed -= 0.005
+            car_run_speed -= 0.2
+            car_run_speed = max(0, car_run_speed)
+    elif POS.value == 1: # YES
+        if car_run_speed > 0.3:
+            car_run_speed -= 0.01
     else:
-        if car_run_speed < 0.8:
+        if car_run_speed < 0.2:
+            car_run_speed += 0.1
+        if car_run_speed < 0.6:
             car_run_speed += 0.002
     
     ack_msg = AckermannDriveStamped()
