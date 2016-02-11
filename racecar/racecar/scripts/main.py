@@ -75,7 +75,7 @@ def auto_drive(pid, curve_count, stop_count=0, obstacle_count = 0):
         if -0.055 < pid and pid > 0.055 and car_run_speed >= 1.3:
             car_run_speed -= 0.005*80
         elif car_run_speed <= target_speed:
-            car_run_speed += 0.005 * 20
+            car_run_speed += 0.005 * 15
             if car_run_speed > target_speed :
                 target_speed = 2.0
         elif car_run_speed > 2.05 :
@@ -137,7 +137,7 @@ def main():
     MODE = 0
     obstacle_count = 0
 
-    curve_detector.curve_count = 2 ##
+    #curve_detector.curve_count = 2 ##
 
     while not rospy.is_shutdown():
         img1, x_location = process_image(cv_image)
