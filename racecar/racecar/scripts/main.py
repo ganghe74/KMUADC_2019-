@@ -51,7 +51,7 @@ obstacles = None
 ack_publisher = None
 car_run_speed = 0.5
 
-OBSTACLE_NUM = 1
+OBSTACLE_NUM = 3
 
 
 def img_callback(data):
@@ -136,7 +136,7 @@ def main():
             POS = obstacle_detector.check(obstacles)
             if POS.value == 1: # LEFT
                 obstacle_count += 1
-                for theta in range(270,540,10):
+                for theta in range(270,500,10):
                     st = 0.24*np.sin(theta*np.pi/180)
                     auto_drive(st,2,0,obstacle_count)
                     print(st)
@@ -158,20 +158,24 @@ def main():
                 obstacle_count += 1
                 #for theta in range(270,500,10):
                 for theta in range(270,360,9):
-                    st = 0.27*np.sin(theta*np.pi/180)
+                    st = 0.15*np.sin(theta*np.pi/180)
                     auto_drive(-st,2,0,obstacle_count)
                     #theta += 10
                     #if theta >= 360:
                         #break
                     time.sleep(0.05)
+                #while 1:
+                    #auto_drive(0,0,3)
+
                 for theta in range(360,500,11):
-                    st = 0.27*np.sin(theta*np.pi/180)
+                    st = 0.19*np.sin(theta*np.pi/180)
                     auto_drive(-st,2,0,obstacle_count)
                     #theta += 10
                     #if theta >= 360:
                         #break
                     time.sleep(0.05)
-          
+                #while 1:
+                #    auto_drive(0,0,3)
                 
                 #for i in range(5):
                 #    auto_drive(0.12, 2)
