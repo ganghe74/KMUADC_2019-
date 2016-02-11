@@ -13,7 +13,7 @@ class Stop_Counter:
         if time.time() < self.previous_time + 10:
             return False
 
-        img = img[240:]
+        img = img[240:] #240
         img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         img_mask = cv2.inRange(img_hsv, self.lower_yellow, self.upper_yellow)
 

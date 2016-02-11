@@ -6,7 +6,7 @@ speed_to_erpm_offset: 0.0
 # servo value (0 to 1) =  steering_angle_to_servo_gain * steering angle (radians) + steering_angle_to_servo_offset
 steering_angle_to_servo_gain: -1.2135
 #steering_angle_to_servo_offset: 0.5304
-steering_angle_to_servo_offset: 0.5004
+steering_angle_to_servo_offset: 0.5704
 
 # publish odom to base link tf
 vesc_to_odom:
@@ -21,7 +21,7 @@ vesc_driver:
   brake_min: 0.0
   brake_max: 0.0
   speed_min: -2000
-  speed_max: 4000
+  speed_max: 8000
   position_min: 0.0
   position_max: 0.0
   servo_min: 0.15

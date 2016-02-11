@@ -29,7 +29,6 @@ from cv_bridge import CvBridge, CvBridgeError
 
 from ackermann_msgs.msg import AckermannDriveStamped
 
-
 warper = Warper()
 slidewindow  = SlideWindow()
 pidcal = PidCal()
@@ -67,7 +66,6 @@ def main():
       cv2.imshow('origin', cv_image)
       #if x_location != None:
       #    pid = round(pidcal.pid_control(int(x_location)), 6)
-      
       if cv2.waitKey(1) & 0xFF == ord('q'):
           break
       cv2.imshow("result", img1)
@@ -76,8 +74,7 @@ def main():
       rospy.spin()
     except KeyboardInterrupt:
       print("Shutting down")
-    cv2.destroyAllWindows()
- 
+    cv2.destroyAllWindows() 
 
 def process_image(frame):
     

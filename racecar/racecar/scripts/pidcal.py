@@ -1,11 +1,12 @@
 class PidCal:
     error_sum = 0
     error_old = 0
-    p = [0.0035, 0.000005, 0.005] # optimized kp,ki,kd
+    # p = [0.0035, 0.000005, 0.005] # optimized kp,ki,kd
+    p = [0.0035, 0.000005, 0.005]
     dp = [p[0]/10, p[1]/10, p[2]/10] # to twiddle kp, ki, kd
 
     def __init__(self):
-        # print "init PidCal"
+        print "init PidCal"
         self.x = 0
     def cal_error(self, setpoint=318):
         return setpoint - self.x
@@ -39,13 +40,13 @@ class PidCal:
                         # direction, the step size might simply be too big.
                         self.dp[i] *= 0.95
 
-        #print(self.p)
+        print(self.p)
 
     # setpoint is the center and the x_current is where the car is
     # width = 640, so 320 is the center but 318 is more accurate in real
     def pid_control(self, x_current, setpoint=318):
-        #print "HHHHHHHHHHHHHHH"
-        #print x_current
+        print "HHHHHHHHHHHHHHH"
+        print x_current
         self.x = int(x_current)
         self.twiddle()
 
