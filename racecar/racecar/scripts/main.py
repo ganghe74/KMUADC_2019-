@@ -52,6 +52,7 @@ ack_publisher = None
 car_run_speed = 0.5
 target_speed = 2.5
 
+OBSTACLE_NUM = 3
 
 def img_callback(data):
     global cv_image
@@ -85,7 +86,7 @@ def auto_drive(pid, curve_count, stop_count=0, obstacle_count = 0):
 #    elif curve_count >= 4 and stop_count == 2:
 #         if car_run_speed > 0.9:
 #             car_run_speed -= 0.005*10
-    elif obstacle_count > 3:
+    elif obstacle_count > OBSTACLE_NUM:
          car_run_speed = 1.1 #1.1
     else :
         car_run_speed = 0.8
@@ -192,7 +193,7 @@ def main():
                 #    time.sleep(0.1)
             
 
-        if obstacle_count == 3:
+        if obstacle_count == OBSTACLE_NUM:
             MODE = 0
             curve_detector.curve_count = 2
             obstacle_count += 1
@@ -223,7 +224,7 @@ def main():
         if MODE == 0 and curve_detector.curve_count == 2:          
             MODE = 1
             car_run_speed = 1.0
-        elif MODE == 1 and -0.03 < pid and pid < 0.03 and obstacle_count < 3:
+        elif MODE == 1 and -0.03 < pid and pid < 0.03 and obstacle_count < OBSTACLE_NUM:
             MODE = 2
             car_run_speed = 2.0
 
