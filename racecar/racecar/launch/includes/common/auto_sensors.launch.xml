@@ -1,0 +1,36 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+  <arg name="racecar_version" />
+  <arg name="sensors_config"
+       default="$(find racecar)/config/$(arg racecar_version)/sensors.yaml" />
+
+  <rosparam file="$(arg sensors_config)" command="load" />
+
+  <!-- usb_cam -->
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/v4l/by-id/usb-HD_Camera_Manufacturer_USB_2.0_Camera-video-index0" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="autoexposure" value="false" />
+    <param name="exposure" value="47" />
+  </node>
+
+  <!-- lidar -->
+  <node name="rplidarNode" pkg="rplidar_ros" type="rplidarNode" output="screen" >
+	  <param name="serial_port" type="string" value="/dev/ttyRPL"/>
+	  <param name="serial_baudrate" type="int" value="115200"/>
+	  <param name="frame_id" type="string" value="laser"/>
+	  <param name="inverted" type="bool" value="false"/>
+	  <param name="angle_compensate" type="bool" value="true"/>
+  </node>
+
+  <!-- imu -->
+  <arg name="razor_config_file" default="$(find razor_imu_9dof)/config/my_razor.yaml"/>
+  <node pkg="razor_imu_9dof" type="imu_node.py" name="imu_node" >
+    <rosparam file="$(arg razor_config_file)" command="load"/>
+  </node>
+  
+</launch>
+
