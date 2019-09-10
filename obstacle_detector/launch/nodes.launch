@@ -22,8 +22,8 @@
 
   <node name="obstacle_extractor" pkg="obstacle_detector" type="obstacle_extractor_node">
     <param name="active"               value="true"/>
-    <param name="use_scan"             value="false"/>
-    <param name="use_pcl"              value="true"/>
+    <param name="use_scan"             value="true"/>
+    <param name="use_pcl"              value="false"/>
 
     <param name="use_split_and_merge"    value="true"/>
     <param name="circles_from_visibles"  value="true"/>

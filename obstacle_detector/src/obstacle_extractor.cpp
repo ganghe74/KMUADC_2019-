@@ -79,8 +79,8 @@ bool ObstacleExtractor::updateParams(std_srvs::Empty::Request &req, std_srvs::Em
   bool prev_active = p_active_;
 
   nh_local_.param<bool>("active", p_active_, true);
-  nh_local_.param<bool>("use_scan", p_use_scan_, false);
-  nh_local_.param<bool>("use_pcl", p_use_pcl_, true);
+  nh_local_.param<bool>("use_scan", p_use_scan_, true);
+  nh_local_.param<bool>("use_pcl", p_use_pcl_, false);
 
   nh_local_.param<bool>("use_split_and_merge", p_use_split_and_merge_, true);
   nh_local_.param<bool>("circles_from_visibles", p_circles_from_visibles_, true);
