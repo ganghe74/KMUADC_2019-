@@ -44,7 +44,7 @@ now = datetime.now() # for record
 
 cv_image = None
 ack_publisher = None
-car_run_speed = 1.2
+car_run_speed = 0.7 # 1.2
 
 def img_callback(data):
     global cv_image
@@ -98,7 +98,7 @@ def main():
             
             # mode on
             if curve_detector.curve_count == 2:
-                car_run_speed = 0.7
+                car_run_speed = 0.6
 
             print pid
             auto_drive(pid)

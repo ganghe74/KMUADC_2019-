@@ -29,7 +29,6 @@ from cv_bridge import CvBridge, CvBridgeError
 
 from ackermann_msgs.msg import AckermannDriveStamped
 
-out2 = cv2.VideoWriter('/home/nvidia/Desktop/video/original.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (640,480))
 
 warper = Warper()
 slidewindow  = SlideWindow()
@@ -68,7 +67,7 @@ def main():
       cv2.imshow('origin', cv_image)
       #if x_location != None:
       #    pid = round(pidcal.pid_control(int(x_location)), 6)
-      out2.write(cv_image) 
+      
       if cv2.waitKey(1) & 0xFF == ord('q'):
           break
       cv2.imshow("result", img1)
@@ -77,8 +76,6 @@ def main():
       rospy.spin()
     except KeyboardInterrupt:
       print("Shutting down")
-    finally:
-      out2.release()
     cv2.destroyAllWindows()
  
 

@@ -43,7 +43,7 @@ class SlideWindow:
         cv2.polylines(out_img, [pts_right], False, (255,0,0), 1)
         #pts_center = np.array([[width/2 + 90, height], [width/2 + 90, height - 150], [width/2 - 60, height - 231], [width/2 - 60, height]], np.int32)
         #cv2.polylines(out_img, [pts_center], False, (0,0,255), 1)
-        pts_catch = np.array([[0, 400], [width, 400]], np.int32)
+        pts_catch = np.array([[0, 340], [width, 340]], np.int32)
         cv2.polylines(out_img, [pts_catch], False, (0,120,120), 1)
 
         # indicies before start line(the region of pts_left)
@@ -93,7 +93,7 @@ class SlideWindow:
                     # draw rectangle
                     # 0.33 is for width of the road
                     cv2.rectangle(out_img, (win_x_low, win_y_low), (win_x_high, win_y_high), (0, 255, 0), 1)
-                    cv2.rectangle(out_img, (win_x_low + 200, win_y_low), (win_x_high + 200, win_y_high), (255, 0, 0), 1)
+                    cv2.rectangle(out_img, (win_x_low + 160, win_y_low), (win_x_high + 160, win_y_high), (255, 0, 0), 1)
                     # indicies of dots in nonzerox in one square
                     good_left_inds = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high) & (nonzerox >= win_x_low) & (nonzerox < win_x_high)).nonzero()[0]
                     # check num of indicies in square and put next location to current
@@ -106,7 +106,7 @@ class SlideWindow:
                     # 338~344 is for recognize line which is yellow line in processed image(you can check in imshow)
                     if win_y_low >= 338 and win_y_low < 344:
                     # 0.165 is the half of the road(0.33)
-                        x_location = x_current + 100
+                        x_location = x_current + 80
                 else: # change line from left to right above(if)
                     win_y_low = y_current - (window + 1) * window_height
                     win_y_high = y_current - (window) * window_height
@@ -122,7 +122,7 @@ class SlideWindow:
                         x_current = np.int(np.polyval(p_right, win_y_high))
                     if win_y_low >= 338 and win_y_low < 344:
                     # 0.165 is the half of the road(0.33)
-                        x_location = x_current - 100
+                        x_location = x_current - 80
 
                 left_lane_inds.extend(good_left_inds)
         #        right_lane_inds.extend(good_right_inds)
@@ -151,7 +151,12 @@ class SlideWindow:
             #except:
             #    pass
             """
-            cv2.circle(out_img,(x_location,400),5,(0,120,120),-1)
 
+	pts_center = np.array([[width//2, 0], [width//2, height]])
+	cv2.polylines(out_img, [pts_center], False, (0, 120, 120), 1)
+        if x_location != None:
+            cv2.circle(out_img,(x_location,340),5,(0,120,120),-1)
+        else :
+            cv2.circle(out_img,(320, 340),5,(0,120,120),-1)
 
         return out_img, x_location
