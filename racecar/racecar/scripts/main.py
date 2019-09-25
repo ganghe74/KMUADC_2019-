@@ -25,6 +25,7 @@ from pidcal import PidCal
 
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
+from obstacle_detector.msg import Obstacles
 from cv_bridge import CvBridge, CvBridgeError
 
 from ackermann_msgs.msg import AckermannDriveStamped
@@ -45,6 +46,7 @@ bridge = CvBridge()
 now = datetime.now() # for record
 
 cv_image = None
+obstacles = None
 ack_publisher = None
 car_run_speed = 1.5
 
@@ -55,6 +57,10 @@ def img_callback(data):
       cv_image = bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
       print(e)
+
+def obstacle_callback(data):
+	global obstacles
+	obstacles = data
   
 def auto_drive(pid):
     global car_run_speed
@@ -88,6 +94,7 @@ def main():
     rospy.sleep(3)
     bridge = CvBridge()
     image_sub = rospy.Subscriber("/usb_cam/image_raw/",Image,img_callback)
+	obstacle_sub = rospy.Subscriber("/obstacles", Obstacles, obstacle_callback, queue_size = 1)
     
     rospy.init_node('auto_xycar', anonymous=True)
 
