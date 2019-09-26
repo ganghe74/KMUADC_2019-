@@ -33,6 +33,7 @@ from datetime import datetime # for record
 
 from Stop_Counter import Stop_Counter
 from CurveDetector import CurveDetector
+from ObstacleDetector import ObstacleDetector
 
 x_location_old = None
 
@@ -89,6 +90,7 @@ def main():
     global ack_publisher
     global x_location_old
     global car_run_speed
+    global obstacles
     pid = None
     
     rospy.sleep(3)
@@ -108,10 +110,18 @@ def main():
 
     stop_counter = Stop_Counter()
     curve_detector = CurveDetector()
+    obstacle_detector = ObstacleDetector()
+
+    MODE = 0
 
     while not rospy.is_shutdown():
         img1, x_location = process_image(cv_image)
-        
+
+        if MODE == 1:
+            if obstacle_detector.check(obstacles):
+                car_run_speed = 0.5
+            car_run_speed = 1.0
+
         if x_location != None:
             x_location_old = x_location
             pid = round(pidcal.pid_control(int(x_location)), 6)
@@ -127,10 +137,12 @@ def main():
 
         # mode on
         if curve_detector.curve_count == 2:          
+            MODE = 1
             car_run_speed = 1.0
 
         detected = stop_counter.check_stop_line(cv_image)
         if detected: # stop line detected
+            MODE = 0
             curve_detector.curve_count = 0
             car_run_speed = 1.5
         if stop_counter.cnt == 3: # finish
