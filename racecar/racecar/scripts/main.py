@@ -33,6 +33,7 @@ from datetime import datetime # for record
 
 from Stop_Counter import Stop_Counter
 from CurveDetector import CurveDetector
+from ObstacleDetector import ObstacleDetector
 
 x_location_old = None
 
@@ -54,9 +55,9 @@ car_run_speed = 1.5
 def img_callback(data):
     global cv_image
     try:
-      cv_image = bridge.imgmsg_to_cv2(data, "bgr8")
+        cv_image = bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
-      print(e)
+        print(e)
 
 def obstacle_callback(data):
 	global obstacles
@@ -89,6 +90,7 @@ def main():
     global ack_publisher
     global x_location_old
     global car_run_speed
+    global obstacles
     pid = None
     
     rospy.sleep(3)
@@ -108,50 +110,60 @@ def main():
 
     stop_counter = Stop_Counter()
     curve_detector = CurveDetector()
+    obstacle_detector = ObstacleDetector()
+
+    MODE = 0
 
     while not rospy.is_shutdown():
-      img1, x_location = process_image(cv_image)
-      
-      if x_location != None:
-          x_location_old = x_location
-          pid = round(pidcal.pid_control(int(x_location)), 6)
-          print pid
-          auto_drive(pid)
-      else:
-          pid = round(pidcal.pid_control(int(x_location_old)), 6)
-          print pid
-          auto_drive(pid)
+        img1, x_location = process_image(cv_image)
 
-      curve_detector.list_update(pid)
-      curve_detector.count_curve()
+        if MODE == 1:
+            if obstacle_detector.check(obstacles):
+                car_run_speed = 0.5
+            car_run_speed = 1.0
 
-      # mode on
-      if curve_detector.curve_count == 2:          
-          car_run_speed = 1.0
+        if x_location != None:
+            x_location_old = x_location
+            pid = round(pidcal.pid_control(int(x_location)), 6)
+            print pid
+            auto_drive(pid)
+        else:
+            pid = round(pidcal.pid_control(int(x_location_old)), 6)
+            print pid
+            auto_drive(pid)
 
-      detected = stop_counter.check_stop_line(cv_image)
-      if detected: # stop line detected
-          curve_detector.curve_count = 0
-          car_run_speed = 1.5
-      if stop_counter.cnt == 3: # finish
-          break
+        curve_detector.list_update(pid)
+        curve_detector.count_curve()
 
-      cv2.imshow('result', img1)
-      cv2.imshow("origin", cv_image)
-      cv2.putText(img1, 'PID %f'%pid, (0,15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-      
-      out.write(img1)
-      out2.write(cv_image)
+        # mode on
+        if curve_detector.curve_count == 2:          
+            MODE = 1
+            car_run_speed = 1.0
 
-      if cv2.waitKey(1) & 0xFF == ord('q'):
-          break
+        detected = stop_counter.check_stop_line(cv_image)
+        if detected: # stop line detected
+            MODE = 0
+            curve_detector.curve_count = 0
+            car_run_speed = 1.5
+        if stop_counter.cnt == 3: # finish
+            break
+
+        cv2.imshow('result', img1)
+        cv2.imshow("origin", cv_image)
+        cv2.putText(img1, 'PID %f'%pid, (0,15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+        
+        out.write(img1)
+        out2.write(cv_image)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
     try:
         rospy.spin()
     except KeyboardInterrupt:
         print("Shutting down")
     finally:
-	print('Finally')
+    print('Finally')
         out.release()
         out2.release()
         cv2.destroyAllWindows() 

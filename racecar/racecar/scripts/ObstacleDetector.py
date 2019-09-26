@@ -5,6 +5,7 @@ class ObstacleDetector:
         self.mode = 0 # 0: Left, 1: Right
         self.previous_time = 0
 
+    # If detected, return True and change mode
     def check(self, obstacles):
         if time.time() < self.previous_time + 1:
             return False
