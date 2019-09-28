@@ -33,7 +33,7 @@ from datetime import datetime # for record
 
 from Stop_Counter import Stop_Counter
 from CurveDetector import CurveDetector
-from ObstacleDetector import ObstacleDetector
+from ObstacleDetector import ObstacleDetector, Position
 
 x_location_old = None
 
@@ -67,7 +67,7 @@ def auto_drive(pid, curve_count):
     global car_run_speed
     #w = 0
     if curve_count < 2:
-        if -0.085 < pid and pid > 0.085 and car_run_speed >= 1.3:
+        if -0.045 < pid and pid > 0.045 and car_run_speed >= 1.3:
             car_run_speed -= 0.005*80
         elif car_run_speed <= 2.0:
             car_run_speed += 0.005 * 20
@@ -121,21 +121,21 @@ def main():
 
         if MODE == 2:
             POS = obstacle_detector.check(obstacles)
-            if POS == "LEFT":
+            if POS.value == 1: # LEFT
                 for i in range(5):
                     auto_drive(-0.17, 2)
                     time.sleep(0.1)
-                for i in range(8):
+                for i in range(7):
                     auto_drive(0.34, 2)
                     time.sleep(0.1)
                 for i in range(5):
                     auto_drive(-0.17, 2)
                     time.sleep(0.1)
-            elif POS == "RIGHT":
+            elif POS.value == 2: # RIGHT
                 for i in range(5):
                     auto_drive(0.17, 2)
                     time.sleep(0.1)
-                for i in range(8):
+                for i in range(7):
                     auto_drive(-0.34, 2)
                     time.sleep(0.1)
                 for i in range(5):

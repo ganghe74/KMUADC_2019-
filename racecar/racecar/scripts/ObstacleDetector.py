@@ -1,23 +1,29 @@
 import time
+import enum
+
+class Position(enum.Enum):
+    NO = 0
+    LEFT = 1
+    RIGHT = 2
 
 class ObstacleDetector:
     def __init__(self):
-        self.mode = "NO"
+        self.mode = Position.NO
         self.previous_time = 0
 
-    # return String "NO", "LEFT", "RIGHT"
+    # return EnumClass Position
     def check(self, obstacles):
         for circle in obstacles.circles:
             p = circle.center
             if -1 < p.y < 0:
                 if abs(p.x) < 0.4:
                     if p.x >= 0:
-                        self.mode = "RIGHT"
+                        self.mode = Position.RIGHT
                     else:
-                        self.mode = "LEFT"
+                        self.mode = Position.LEFT
                     break
             else:
-                self.mode = "NO"
+                self.mode = Position.NO
         return self.mode
 
 obstacles = None
@@ -37,7 +43,7 @@ if __name__ == '__main__':
 
     while not rospy.is_shutdown():
         ob.check(obstacles)
-        print(ob.mode)
+        print(ob.mode, ob.mode.value == 0)
         time.sleep(0.1)
 
     print('Done')
