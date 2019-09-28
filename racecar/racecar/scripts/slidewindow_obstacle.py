@@ -38,7 +38,7 @@ class SlideWindow:
         # first location and segmenation location finder
         # draw line
         # 130 -> 150 -> 180
-        pts_left = np.array([[width/2 - 70, height], [width/2 - 70, height - 60], [width/2 - 170, height - 80], [width/2 - 170, height]], np.int32)
+        pts_left = np.array([[240, height], [240, height - 60], [320, height - 80], [320, height]], np.int32)
         cv2.polylines(out_img, [pts_left], False, (0,255,0), 1)
         pts_right = np.array([[width/2 + 57, height], [width/2 + 57, height - 80], [width/2 + 120, height - 110], [width/2 + 120, height]], np.int32)
         cv2.polylines(out_img, [pts_right], False, (255,0,0), 1)
@@ -49,8 +49,8 @@ class SlideWindow:
 
         # indicies before start line(the region of pts_left)
         # 337 -> 310
-        good_left_inds = ((nonzerox >= width/2 - 170) & (nonzeroy >= nonzerox * 0.33 + 300) & (nonzerox <= width/2 - 90)).nonzero()[0]
-        good_right_inds = ((nonzerox >= width/2 + 20) & (nonzeroy >= nonzerox * (-0.48) + 500) & (nonzerox <= width/2 + 120)).nonzero()[0]
+        good_left_inds = ((nonzerox >= width/2 - 80) & (nonzeroy >= nonzerox * 0.33 + 300) & (nonzerox <= width/2)).nonzero()[0]
+        good_right_inds = ((nonzerox >= 570) & (nonzeroy >= 240) & (nonzeroy <= 160) & (nonzerox <= 640)).nonzero()[0]
 
         # left line exist, lefty current init
         line_exist_flag = None 
@@ -84,6 +84,8 @@ class SlideWindow:
             # it's just for visualization of the valid inds in the region
             for i in range(len(good_left_inds)):
                     img = cv2.circle(out_img, (nonzerox[good_left_inds[i]], nonzeroy[good_left_inds[i]]), 1, (0,255,0), -1)
+            for j in range(len(good_right_inds)):
+                    img = cv2.circle(out_img, (nonzerox[good_right_inds[i]], nonzeroy[good_right_inds[i]]), 1, (0,255,255), -1)
             # window sliding and draw
             for window in range(0, nwindows):
                 if line_flag == 1: 
@@ -108,7 +110,7 @@ class SlideWindow:
                     # 338~344 is for recognize line which is yellow line in processed image(you can check in imshow)
                     if win_y_low >= 338 and win_y_low < 344:
                     # 0.165 is the half of the road(0.33)
-                        x_location = x_current + int(width * 0.175) 
+                        x_location = x_current + 60
                 else: # change line from left to right above(if)
                     win_y_low = y_current - (window + 1) * window_height
                     win_y_high = y_current - (window) * window_height
@@ -122,9 +124,9 @@ class SlideWindow:
                     elif nonzeroy[right_lane_inds] != [] and nonzerox[right_lane_inds] != []:
                         p_right = np.polyfit(nonzeroy[right_lane_inds], nonzerox[right_lane_inds], 2) 
                         x_current = np.int(np.polyval(p_right, win_y_high))
-                    if win_y_low >= 338 and win_y_low < 344:
+                    if win_y_low >= 160 and win_y_low < 190:
                     # 0.165 is the half of the road(0.33)
-                        x_location = x_current - int(width * 0.175) 
+                        x_location = x_current - 280
 
                 left_lane_inds.extend(good_left_inds)
         #        right_lane_inds.extend(good_right_inds)  

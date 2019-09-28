@@ -49,7 +49,7 @@ now = datetime.now() # for record
 cv_image = None
 obstacles = None
 ack_publisher = None
-car_run_speed = 0.5
+car_run_speed = 0.7
 
 
 def img_callback(data):
@@ -63,26 +63,24 @@ def obstacle_callback(data):
     global obstacles
     obstacles = data
   
-def auto_drive(pid, curve_count):
+def auto_drive(pid):
     global car_run_speed
     #w = 0
-    if curve_count < 2:
-        if -0.085 < pid and pid > 0.085 and car_run_speed >= 1.3:
-            car_run_speed -= 0.005*40
-        elif car_run_speed <= 1.7:
-            car_run_speed += 0.005 * 20
-    else :
-         car_run_speed = 1.0
+    #if -0.065 < pid and pid < 0.065:
+    #    w = 1
+    #else:
+    #    w = 0.3
+
+    #if car_run_speed < 1.0 * w:
+    #    car_run_speed += 0.002 * 10
     #else:
     #    car_run_speed -= 0.003 * 10
     
-        
     ack_msg = AckermannDriveStamped()
     ack_msg.header.stamp = rospy.Time.now()
     ack_msg.header.frame_id = ''
     ack_msg.drive.steering_angle = pid
     ack_msg.drive.speed = car_run_speed
-
     ack_publisher.publish(ack_msg)
     print 'speed: ' 
     print car_run_speed 
@@ -119,46 +117,41 @@ def main():
     while not rospy.is_shutdown():
         img1, x_location = process_image(cv_image)
 
-        if MODE == 1:
+        if True:
             if obstacle_detector.check(obstacles):
-                car_run_speed = 1.0
-            car_run_speed = 1.0
+                car_run_speed = 0.4
+                for i in range(15):
+                    auto_drive(-0.17)
+                    time.sleep(0.1)
+                for i in range(15):
+                    auto_drive(0.34)
+                    time.sleep(0.1)
+                for i in range(7):
+                    auto_drive(-0.17)
+                    time.sleep(0.1)
+            else:
+                car_run_speed = 0.7
 
         if x_location != None:
             x_location_old = x_location
-            pid = round(pidcal.pid_control(int(x_location),curve_detector.curve_count), 6)
-            print pid
-            auto_drive(pid, curve_detector.curve_count)
+            pid = round(pidcal.pid_control(int(x_location)), 6)
+            auto_drive(pid)
         else:
-            pid = round(pidcal.pid_control(int(x_location_old),curve_detector.curve_count), 6)
-            print pid
-            auto_drive(pid, curve_detector.curve_count)
+            pid = round(pidcal.pid_control(int(x_location_old)), 6)
+            auto_drive(pid)
 
-        curve_detector.list_update(pid)
-        curve_detector.count_curve()
-
-        # mode on
-        #if curve_detector.curve_count == 2:          
-        #    MODE = 1
-        #    car_run_speed = 1.0
-
-        detected = stop_counter.check_stop_line(cv_image)
-        if detected: # stop line detected
-            MODE = 0
-            curve_detector.curve_count = 0
-            car_run_speed = 1.7
-        if stop_counter.cnt == 3: # finish
-            break
+        cv2.putText(img1, 'PID %f'%pid, (0,15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 
         cv2.imshow('result', img1)
         cv2.imshow("origin", cv_image)
-        cv2.putText(img1, 'PID %f'%pid, (0,15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
         
         out.write(img1)
         out2.write(cv_image)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+
 
     try:
         rospy.spin()

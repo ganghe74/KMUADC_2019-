@@ -8,10 +8,20 @@ class ObstacleDetector:
     # If detected, return True and change mode
     def check(self, obstacles):
         if time.time() < self.previous_time + 1:
-            return False
+            return True
         for circle in obstacles.circles:
             p = circle.center
-            if abs(p.x) < 0.3 and -1 < p.y < 0:
+            #if -0.4 <= p.x <= -0.15 and -1 <= p.y <= 0:
+	    #	self.previous_time = time.time()
+            #   self.mode = 0
+	    #elif 0.15 <= p.x <= 0.4 and -1 <= p.y <= 0:
+		#self.previous_time = time.time()
+                #self.mode = 1
+	    #else:
+		#self.previous_time = time.time()
+                #self.mode = 0
+
+	    if abs(p.x) < 0.3 and -1 < p.y < 0:
                 self.previous_time = time.time()
                 self.mode = 1 - self.mode
                 return True

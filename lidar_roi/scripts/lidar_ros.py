@@ -16,14 +16,19 @@ rospy.Subscriber('/obstacles', Obstacles, callback, queue_size = 1)
 time.sleep(3)
 
 while not rospy.is_shutdown():
-	flag = False
+	flag = 0
 	for circle in obstacles.circles:
 		p = circle.center
-		if abs(p.x) <= 0.3 and -1 <= p.y <= 0:
-			flag = True
-	if flag:
-		print("DETECT")
+		if -0.4 <= p.x <= -0.15 and -1 <= p.y <= 0:
+			flag = 1
+		elif 0.15 <= p.x <= 0.4 and -1 <= p.y <= 0:
+			flag = 2
+
+	if flag == 1:
+		print("LEFT OBSTACLE DETECT!!")
+	elif flag == 2:
+		print("RIGHT OBSTACLE DETECT!!")
 	else:
-		print("no")
+		print("NONE")
 
 	time.sleep(1)

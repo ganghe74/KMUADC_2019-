@@ -1,8 +1,8 @@
 class PidCal:
     error_sum = 0
     error_old = 0
-    # p = [0.0035, 0.000005, 0.005] # optimized kp,ki,kd
-    p = [0.0035, 0.000005, 0.005]
+    #p = [0.0035, 0.000005, 0.005] # optimized kp,ki,kd original
+    p = [0.0020, 0.000005, 0.005]
     dp = [p[0]/10, p[1]/10, p[2]/10] # to twiddle kp, ki, kd
 
     def __init__(self):
@@ -44,9 +44,31 @@ class PidCal:
 
     # setpoint is the center and the x_current is where the car is
     # width = 640, so 320 is the center but 318 is more accurate in real
-    def pid_control(self, x_current, setpoint=318):
+    def pid_control(self, x_current, curve_count, setpoint=318):
         print "HHHHHHHHHHHHHHH"
         print x_current
+        if curve_count < 2 :
+            self.p[0] = 0.0020
+            self.p[1] = 0.000005
+            self.p[2] = 0.005
+            #p = [0.0020, 0.000005, 0.005]
+            #self.dp[0] = self.p[0]/10
+            #self.dp[1] = self.p[1]/10
+            #self.dp[2] = self.p[2]/10
+            #dp = [p[0]/10, p[1]/10, p[2]/10] # to twiddle kp, ki, kd
+        else :
+            self.p[0] = 0.0035
+            self.p[1] = 0.000005
+            self.p[2] = 0.005
+            #p = [0.0020, 0.000005, 0.005]
+            #self.dp[0] = self.p[0]/10
+            #self.dp[1] = self.p[1]/10
+            #self.dp[2] = self.p[2]/10
+            #dp = [p[0]/10, p[1]/10, p[2]/10] # to twiddle kp, ki, kd
+            #p = [0.0035, 0.000005, 0.005] # optimized kp,ki,kd original
+            #dp = [p[0]/10, p[1]/10, p[2]/10] # to twiddle kp, ki, kd
+            
+
         self.x = int(x_current)
         self.twiddle()
 
