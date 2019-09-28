@@ -68,8 +68,8 @@ def auto_drive(pid, curve_count):
     #w = 0
     if curve_count < 2:
         if -0.085 < pid and pid > 0.085 and car_run_speed >= 1.3:
-            car_run_speed -= 0.005*40
-        elif car_run_speed <= 1.7:
+            car_run_speed -= 0.005*80
+        elif car_run_speed <= 2.0:
             car_run_speed += 0.005 * 20
     else :
          car_run_speed = 1.0
@@ -119,10 +119,30 @@ def main():
     while not rospy.is_shutdown():
         img1, x_location = process_image(cv_image)
 
-        if MODE == 1:
-            if obstacle_detector.check(obstacles):
+        if MODE == 2:
+            POS = obstacle_detector.check(obstacles)
+            if POS == "LEFT":
+                for i in range(5):
+                    auto_drive(-0.17, 2)
+                    time.sleep(0.1)
+                for i in range(8):
+                    auto_drive(0.34, 2)
+                    time.sleep(0.1)
+                for i in range(5):
+                    auto_drive(-0.17, 2)
+                    time.sleep(0.1)
+            elif POS == "RIGHT":
+                for i in range(5):
+                    auto_drive(0.17, 2)
+                    time.sleep(0.1)
+                for i in range(8):
+                    auto_drive(-0.34, 2)
+                    time.sleep(0.1)
+                for i in range(5):
+                    auto_drive(0.17, 2)
+                    time.sleep(0.1)
+            else:
                 car_run_speed = 1.0
-            car_run_speed = 1.0
 
         if x_location != None:
             x_location_old = x_location
@@ -138,15 +158,21 @@ def main():
         curve_detector.count_curve()
 
         # mode on
-        #if curve_detector.curve_count == 2:          
-        #    MODE = 1
-        #    car_run_speed = 1.0
+        if MODE == 0 and curve_detector.curve_count == 2:          
+            MODE = 1
+            car_run_speed = 1.0
+        elif MODE == 1 and -0.01 > pid and pid < 0.01 :
+            MODE = 2 
+        elif curve_detector.curve_count == 3:          
+            MODE = 0
+            car_run_speed = 1.0
 
         detected = stop_counter.check_stop_line(cv_image)
+
         if detected: # stop line detected
             MODE = 0
             curve_detector.curve_count = 0
-            car_run_speed = 1.7
+            car_run_speed = 2.0
         if stop_counter.cnt == 3: # finish
             break
 
