@@ -77,7 +77,7 @@ def auto_drive(pid, curve_count, stop_count=0, obstacle_count = 0):
 #         if car_run_speed > 0.9:
 #             car_run_speed -= 0.005*10
     elif obstacle_count > 3:
-         car_run_speed = 1.1
+         car_run_speed = 0.9 #1.1
     else :
         car_run_speed = 0.8
 
@@ -207,7 +207,7 @@ def main():
         if MODE == 0 and curve_detector.curve_count == 2:          
             MODE = 1
             car_run_speed = 1.0
-        elif MODE == 1 and -0.03 < pid and pid < 0.03 :
+        elif MODE == 1 and -0.03 < pid and pid < 0.03 and obstacle_count < 3:
             MODE = 2
 
         detected = stop_counter.check_stop_line(cv_image)
