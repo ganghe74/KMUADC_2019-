@@ -189,9 +189,14 @@ def main():
             curve_detector.curve_count = 2
             obstacle_count += 1
                           
-
+        #if obstacle_count == 4: 
+        #    print(x_location) # for test code
         if x_location != None:
-            x_location_old = x_location
+            # test 3 lines
+            if obstacle_count == 4 and np.abs(x_location - x_location_old) < 40:
+                x_location = x_location_old
+            else:
+                x_location_old = x_location
             pid = round(pidcal.pid_control(int(x_location),curve_detector.curve_count), 6)
             #print pid
             auto_drive(pid, curve_detector.curve_count, stop_counter.cnt,obstacle_count)
@@ -217,6 +222,7 @@ def main():
             obstacle_count = 0
             curve_detector.curve_count = 0
             car_run_speed = 2.0
+            print("--------------")
         if stop_counter.cnt == 3: # finish
             while 1:
                 auto_drive(0,0,3)
