@@ -67,19 +67,21 @@ def auto_drive(pid, curve_count, stop_count=0, obstacle_count = 0):
     global car_run_speed
     #w = 0
     if stop_count == 3:
-        car_run_speed = 0
+        car_run_speed = 0.0
     elif curve_count < 2:
         if -0.055 < pid and pid > 0.055 and car_run_speed >= 1.3:
             car_run_speed -= 0.005*80
         elif car_run_speed <= 2.0:
             car_run_speed += 0.005 * 20
-    elif curve_count >= 4 and stop_count == 2:
-         if car_run_speed > 0.9:
-             car_run_speed -= 0.005*10
+    #elif curve_count >= 4 and stop_count == 2:
+         #if car_run_speed > 0.8:
+             #car_run_speed -= 0.005*10
+    elif obstacle_count <= 3 and obstacle_count >= 1:
+         car_run_speed = 0.6
     elif obstacle_count > 3:
          car_run_speed = 1.1
     else :
-        car_run_speed = 0.8
+        car_run_speed = 1.2
 
     #else:
     #    car_run_speed -= 0.003 * 10
@@ -113,10 +115,10 @@ def main():
     #ack_publisher = rospy.Publisher('vesc/low_level/ackermann_cmd_mux/input/teleop', AckermannDriveStamped, queue_size=1)
     ack_publisher = rospy.Publisher('ackermann_cmd_mux/input/teleop', AckermannDriveStamped, queue_size=1)
     # record the processed
-    out = cv2.VideoWriter('/home/nvidia/Desktop/video/processed {}-{}-{} {}-{}.avi'.format(now.year, now.month, now.day, now.hour, now.minute), cv2.VideoWriter_fourcc('M','J','P','G'), 30, (640,480))
+    #out = cv2.VideoWriter('/home/nvidia/Desktop/video/processed {}-{}-{} {}-{}.avi'.format(now.year, now.month, now.day, now.hour, now.minute), cv2.VideoWriter_fourcc('M','J','P','G'), 30, (640,480))
 
     # record the origin
-    out2 = cv2.VideoWriter('/home/nvidia/Desktop/video/original {}-{}-{} {}-{}.avi'.format(now.year, now.month, now.day, now.hour, now.minute), cv2.VideoWriter_fourcc('M','J','P','G'), 30, (640,480))
+    #out2 = cv2.VideoWriter('/home/nvidia/Desktop/video/original {}-{}-{} {}-{}.avi'.format(now.year, now.month, now.day, now.hour, now.minute), cv2.VideoWriter_fourcc('M','J','P','G'), 30, (640,480))
 
     stop_counter = Stop_Counter()
     curve_detector = CurveDetector()
@@ -125,7 +127,7 @@ def main():
     MODE = 0
     obstacle_count = 0
 
-    #curve_detector.curve_count = 2 ##
+    curve_detector.curve_count = 2 ##
 
     while not rospy.is_shutdown():
         img1, x_location = process_image(cv_image)
@@ -137,8 +139,10 @@ def main():
                 for theta in range(270,540,10):
                     st = 0.24*np.sin(theta*np.pi/180)
                     auto_drive(st,2,0,obstacle_count)
-                    print(st)
+                    #print(st)
                     time.sleep(0.05)
+                #while 1:
+                #    auto_drive(0,0,3) 
                 
                 
                 #for i in range(5):
@@ -155,19 +159,25 @@ def main():
             elif POS.value == 2: # RIGHT
                 obstacle_count += 1
                 #for theta in range(270,500,10):
-                for theta in range(270,500,10):
+                for theta in range(270,360,9):
                     st = 0.27*np.sin(theta*np.pi/180)
                     auto_drive(-st,2,0,obstacle_count)
                     #theta += 10
                     #if theta >= 360:
                         #break
                     time.sleep(0.05)
-                #for theta in range(360,500,11):
-                #    st = 0.27*np.sin(theta*np.pi/180)
-                #    auto_drive(-st,2,0,obstacle_count)
+                for theta in range(360,500,11):
+                    st = 0.27*np.sin(theta*np.pi/180)
+                    auto_drive(-st,2,0,obstacle_count)
                     #theta += 10
                     #if theta >= 360:
                         #break
+                    time.sleep(0.05)
+                #while 1:
+                #    auto_drive(0,0,3) 
+                #for theta in range(500, 540, 5):
+                #    st = 0.27*np.sin(theta*np.pi/180)
+                #    auto_drive(st,2)
                 #    time.sleep(0.05)
           
                 
@@ -218,20 +228,22 @@ def main():
             curve_detector.curve_count = 0
             car_run_speed = 2.0
         if stop_counter.cnt == 3: # finish
+            while 1:
+                auto_drive(0,0,3)
             break
         
         #print(curve_detector.curve_count)
 
-        cv2.putText(cv_image, 'PID %f'%pid, (0,15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-        cv2.putText(cv_image, 'MODE %d'%MODE, (0,40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-        cv2.putText(cv_image, 'curve_count %d'%curve_detector.curve_count, (0,55), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-        cv2.putText(cv_image, 'obstacle_count %d'%obstacle_count, (0,80), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        #cv2.putText(cv_image, 'PID %f'%pid, (0,15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        #cv2.putText(cv_image, 'MODE %d'%MODE, (0,40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        #cv2.putText(cv_image, 'curve_count %d'%curve_detector.curve_count, (0,55), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        #cv2.putText(cv_image, 'obstacle_count %d'%obstacle_count, (0,80), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
         
-        cv2.imshow('result', img1)
-        cv2.imshow("origin", cv_image)
+        #cv2.imshow('result', img1)
+        #cv2.imshow("origin", cv_image)
 
-        out.write(img1)
-        out2.write(cv_image)
+        #out.write(img1)
+        #out2.write(cv_image)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
