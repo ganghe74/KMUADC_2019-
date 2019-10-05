@@ -8,6 +8,6 @@
 
   <node pkg="joy" type="joy_node" name="joy_node" />
 
-  <node pkg="racecar" type="main.py" name="auto_xycar" output="screen" />
+  <node pkg="racecar" type="main_fast.py" name="auto_xycar" output="screen" />
 
 </launch>

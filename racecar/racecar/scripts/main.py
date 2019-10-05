@@ -63,16 +63,24 @@ def obstacle_callback(data):
     global obstacles
     obstacles = data
   
-def auto_drive(pid, curve_count):
+def auto_drive(pid, curve_count, stop_count=0, obstacle_count = 0):
     global car_run_speed
     #w = 0
-    if curve_count < 2:
-        if -0.045 < pid and pid > 0.045 and car_run_speed >= 1.3:
+    if stop_count == 3:
+        car_run_speed = 0
+    elif curve_count < 2:
+        if -0.055 < pid and pid > 0.055 and car_run_speed >= 1.3:
             car_run_speed -= 0.005*80
         elif car_run_speed <= 2.0:
             car_run_speed += 0.005 * 20
+    elif curve_count >= 4 and stop_count == 2:
+         if car_run_speed > 0.9:
+             car_run_speed -= 0.005*10
+    elif obstacle_count > 3:
+         car_run_speed = 1.1
     else :
-         car_run_speed = 1.0
+        car_run_speed = 0.8
+
     #else:
     #    car_run_speed -= 0.003 * 10
     
@@ -84,8 +92,8 @@ def auto_drive(pid, curve_count):
     ack_msg.drive.speed = car_run_speed
 
     ack_publisher.publish(ack_msg)
-    print 'speed: ' 
-    print car_run_speed 
+    #print 'speed: ' 
+    #print car_run_speed 
 
 def main():
     global cv_image
@@ -115,6 +123,9 @@ def main():
     obstacle_detector = ObstacleDetector()
 
     MODE = 0
+    obstacle_count = 0
+
+    #curve_detector.curve_count = 2 ##
 
     while not rospy.is_shutdown():
         img1, x_location = process_image(cv_image)
@@ -122,37 +133,72 @@ def main():
         if MODE == 2:
             POS = obstacle_detector.check(obstacles)
             if POS.value == 1: # LEFT
-                for i in range(5):
-                    auto_drive(-0.17, 2)
-                    time.sleep(0.1)
-                for i in range(7):
-                    auto_drive(0.34, 2)
-                    time.sleep(0.1)
-                for i in range(5):
-                    auto_drive(-0.17, 2)
-                    time.sleep(0.1)
+                obstacle_count += 1
+                for theta in range(270,540,10):
+                    st = 0.24*np.sin(theta*np.pi/180)
+                    auto_drive(st,2,0,obstacle_count)
+                    print(st)
+                    time.sleep(0.05)
+                
+                
+                #for i in range(5):
+                #    auto_drive(-0.12, 2)
+                #    time.sleep(0.1)
+                #for i in range(5):
+                #    auto_drive(0.24, 2)
+                #    time.sleep(0.1)
+                #for i in range(3):
+                #    auto_drive(-0.12, 2)
+                #    time.sleep(0.1)
+
+                
             elif POS.value == 2: # RIGHT
-                for i in range(5):
-                    auto_drive(0.17, 2)
-                    time.sleep(0.1)
-                for i in range(7):
-                    auto_drive(-0.34, 2)
-                    time.sleep(0.1)
-                for i in range(5):
-                    auto_drive(0.17, 2)
-                    time.sleep(0.1)
-            else:
-                car_run_speed = 1.0
+                obstacle_count += 1
+                #for theta in range(270,500,10):
+                for theta in range(270,500,10):
+                    st = 0.27*np.sin(theta*np.pi/180)
+                    auto_drive(-st,2,0,obstacle_count)
+                    #theta += 10
+                    #if theta >= 360:
+                        #break
+                    time.sleep(0.05)
+                #for theta in range(360,500,11):
+                #    st = 0.27*np.sin(theta*np.pi/180)
+                #    auto_drive(-st,2,0,obstacle_count)
+                    #theta += 10
+                    #if theta >= 360:
+                        #break
+                #    time.sleep(0.05)
+          
+                
+                
+                
+                #for i in range(5):
+                #    auto_drive(0.12, 2)
+                #    time.sleep(0.1)
+                #for i in range(5):
+                #    auto_drive(-0.24, 2)
+                #    time.sleep(0.1)
+                #for i in range(3):
+                #    auto_drive(0.12, 2)
+                #    time.sleep(0.1)
+            
+
+        if obstacle_count == 3:
+            MODE = 0
+            curve_detector.curve_count = 2
+            obstacle_count += 1
+                          
 
         if x_location != None:
             x_location_old = x_location
             pid = round(pidcal.pid_control(int(x_location),curve_detector.curve_count), 6)
-            print pid
-            auto_drive(pid, curve_detector.curve_count)
+            #print pid
+            auto_drive(pid, curve_detector.curve_count, stop_counter.cnt,obstacle_count)
         else:
             pid = round(pidcal.pid_control(int(x_location_old),curve_detector.curve_count), 6)
-            print pid
-            auto_drive(pid, curve_detector.curve_count)
+            #print pid
+            auto_drive(pid, curve_detector.curve_count, stop_counter.cnt, obstacle_count)
 
         curve_detector.list_update(pid)
         curve_detector.count_curve()
@@ -161,25 +207,29 @@ def main():
         if MODE == 0 and curve_detector.curve_count == 2:          
             MODE = 1
             car_run_speed = 1.0
-        elif MODE == 1 and -0.01 > pid and pid < 0.01 :
-            MODE = 2 
-        elif curve_detector.curve_count == 3:          
-            MODE = 0
-            car_run_speed = 1.0
+        elif MODE == 1 and -0.03 < pid and pid < 0.03 :
+            MODE = 2
 
         detected = stop_counter.check_stop_line(cv_image)
 
         if detected: # stop line detected
             MODE = 0
+            obstacle_count = 0
             curve_detector.curve_count = 0
             car_run_speed = 2.0
         if stop_counter.cnt == 3: # finish
             break
+        
+        #print(curve_detector.curve_count)
 
+        cv2.putText(cv_image, 'PID %f'%pid, (0,15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        cv2.putText(cv_image, 'MODE %d'%MODE, (0,40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        cv2.putText(cv_image, 'curve_count %d'%curve_detector.curve_count, (0,55), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        cv2.putText(cv_image, 'obstacle_count %d'%obstacle_count, (0,80), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        
         cv2.imshow('result', img1)
         cv2.imshow("origin", cv_image)
-        cv2.putText(img1, 'PID %f'%pid, (0,15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-        
+
         out.write(img1)
         out2.write(cv_image)
 

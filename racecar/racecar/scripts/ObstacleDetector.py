@@ -10,17 +10,19 @@ class ObstacleDetector:
     def __init__(self):
         self.mode = Position.NO
         self.previous_time = 0
+        self.cnt = 0
 
     # return EnumClass Position
     def check(self, obstacles):
         for circle in obstacles.circles:
             p = circle.center
-            if -1 < p.y < 0:
-                if abs(p.x) < 0.4:
+            if -1.0 < p.y < 0:
+                if abs(p.x) < 0.3:
                     if p.x >= 0:
                         self.mode = Position.RIGHT
                     else:
                         self.mode = Position.LEFT
+                        self.cnt += 1
                     break
             else:
                 self.mode = Position.NO
@@ -43,7 +45,7 @@ if __name__ == '__main__':
 
     while not rospy.is_shutdown():
         ob.check(obstacles)
-        print(ob.mode, ob.mode.value == 0)
+        print(ob.mode)
         time.sleep(0.1)
 
     print('Done')
