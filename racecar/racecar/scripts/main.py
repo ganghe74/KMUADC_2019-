@@ -218,6 +218,8 @@ def main():
             curve_detector.curve_count = 0
             car_run_speed = 2.0
         if stop_counter.cnt == 3: # finish
+            while 1:
+                auto_drive(0,0,3)
             break
         
         #print(curve_detector.curve_count)
