@@ -16,7 +16,7 @@ class ObstacleDetector:
     def check(self, obstacles):
         for circle in obstacles.circles:
             p = circle.center
-            if -1.0 < p.y < 0:
+            if -0.75 < p.y < 0:
                 if abs(p.x) < 0.3:
                     if p.x >= 0:
                         self.mode = Position.RIGHT
