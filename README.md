@@ -5,7 +5,7 @@
 팀 FOSCAR의 소스코드입니다.
 
 ## 팀원
-[@ganghe74](https://github.com/ganghe74), [@kyun2024](https://github.com/kyun2024), [@parkhojun](https://github.com/parkhojun), [@ShineySun](https://github.com/ShineySun), [@username1015](https://github.com/username1015)
+[@ganghe74](https://github.com/ganghe74), [@kyun2024](https://github.com/kyun2024), [@parkhojun](https://github.com/parkhojun), [@ShineySun](https://github.com/ShineySun), [@plmoknijb15](https://github.com/plmoknijb15)
 
 ## 브랜치
 브랜치|용도
